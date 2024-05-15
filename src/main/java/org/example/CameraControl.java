@@ -13,7 +13,7 @@ public class CameraControl implements Runnable {
     private static final Logger logger = Logger.getLogger(CameraControl.class.getName());
     private KafkaConsumer<String, String> consumer;
     private KafkaProducerHelper producer;
-    private volatile double cameraAngle = 0; // Kamera açısı başlangıçta 0
+    private volatile double cameraAngle = 0; // Kamera açısı başlangıçta 0 belirlenmiştir.
     private volatile boolean running = true;
 
     public CameraControl() {
@@ -38,7 +38,7 @@ public class CameraControl implements Runnable {
                 for (ConsumerRecord<String, String> record : records) {
                     if (record.key().equals("angle")) {
                         cameraAngle = Double.parseDouble(record.value());
-                        // Kamera açısını güncelle ve durumu gönder
+                        // Kamera açısını günceller ve durumu gönderir
                         producer.sendMessage("CameraLosStatus", "cameraAngle", String.valueOf(cameraAngle));
                     }
                 }

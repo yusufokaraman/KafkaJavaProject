@@ -66,16 +66,16 @@ public class WorldSimulator extends Application {
                 target.setTranslateY(finalY);
             });
 
-            // Kafka'ya pozisyon bilgisi gönder
+            // Kafka'ya pozisyon bilgisini gönderir.
             producer.sendMessage("TargetPointPosition", "key", finalX + "," + finalY);
 
-            // Kafka'ya kule pozisyon bilgisi gönder
+            // Kafka'ya kule pozisyon bilgisini gönderir
             producer.sendMessage("TowerPosition", "tower1", "0,0"); // Sabit kule pozisyonu (örnek olarak 0,0 kullanıldı)
             producer.sendMessage("TowerPosition", "tower2", "200,200"); // Diğer sabit kule pozisyonu (örnek olarak 200,200 kullanıldı)
             
             logger.log(Level.INFO, "Position updated: x={0}, y={1}", new Object[]{finalX, finalY});
             try {
-                Thread.sleep(1000); // 1 saniye bekle
+                Thread.sleep(1000); 
             } catch (InterruptedException e) {
                 logger.log(Level.SEVERE, "Simulation interrupted", e);
                 Thread.currentThread().interrupt();

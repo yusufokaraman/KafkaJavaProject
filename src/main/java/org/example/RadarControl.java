@@ -41,11 +41,11 @@ public class RadarControl implements Runnable {
                             double x = Double.parseDouble(position[0]);
                             double y = Double.parseDouble(position[1]);
 
-                            // Hesaplamalar: hedefin açısal pozisyonunu ve mesafesini hesapla
+                            // Hesaplamalar: hedefin açısal pozisyonunu ve mesafesini hesaplar
                             double angle = Math.atan2(y, x) * (180 / Math.PI);
                             double distance = Math.sqrt(x * x + y * y);
 
-                            // RadarOutput konusuna mesaj gönder
+                            // İlgili topiklere mesaj gönderilir.
                             producer.sendMessage("TargetBearingPosition", "angle", String.valueOf(angle));
                             producer.sendMessage("TargetBearingPosition", "distance", String.valueOf(distance));
                         } catch (NumberFormatException e) {
