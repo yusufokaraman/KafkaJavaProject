@@ -26,12 +26,12 @@ Amacı: Kafka yöneticisi olarak kullanılır, Kafka kümelerini izlemek ve yön
 Sistem, aşağıdaki bileşenlerden oluşur:
 
 Zookeeper: Kafka'nın çalışması için gerekli olan koordinasyon hizmetlerini sağlar.
-Kafka Broker: Uygulamalar arasında veri aktarımını sağlayan mesaj kuyruğu hizmeti sunar. Konular: TargetPointPosition, TowerPosition, CameraLosStatus, TargetBearingPosition.
+Kafka Broker: Uygulamalar arasında veri aktarımını sağlayan mesaj kuyruğu hizmeti sunar. Topikler: TargetPointPosition, TowerPosition, CameraLosStatus, TargetBearingPosition.
 AKHQ: Kafka yöneticisi olarak kullanılır, Kafka kümelerini izlemek ve yönetmek için grafiksel bir arayüz sunar.
 ## Veri Akışı
-world_simulator uygulaması, hedefin konum bilgilerini üretir ve TargetPointPosition konusuna gönderir.
-radar_control uygulaması, TargetPointPosition konusundan gelen verileri alır, açı ve mesafe bilgilerini hesaplar ve TargetBearingPosition konusuna gönderir.
-camera_control uygulaması, TargetBearingPosition konusundan gelen açı bilgilerini alır ve kameranın açısını günceller, ardından CameraLosStatus konusuna gönderir.
+world_simulator uygulaması, hedefin konum bilgilerini üretir ve TargetPointPosition topiğine gönderir.
+radar_control uygulaması, TargetPointPosition topiğinden gelen verileri alır, açı ve mesafe bilgilerini hesaplar ve TargetBearingPosition topiğine gönderir.
+camera_control uygulaması, TargetBearingPosition topiğinden gelen açı bilgilerini alır ve kameranın açısını günceller, ardından CameraLosStatus topiğine gönderir.
 world_gui uygulaması, tüm bu bilgileri alır ve grafiksel arayüzde gösterir.
 ## Kurulum ve Başlatma
 ### 1. Docker Ortamının Hazırlanması
@@ -52,6 +52,26 @@ docker-compose up -d
 ```
 Bu komut, Zookeeper, Kafka ve AKHQ hizmetlerini kapsayıcılar içinde başlatacaktır.
 Resources klasörü içerisinde yml dosyası verilmiştir.
+Docker üzerinde harici uygulamaların ayağa kaldırılmasının sonrasında topiklerin manuel olarak oluşturulması gerekmektedir.
+Aşağıda ilgili komutlar verilmiştir:
+```
+
+docker exec -it kafka-container-id /bin/bash
+
+
+# TargetPointPosition topiği
+kafka-topics --create --topic TargetPointPosition --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+# TargetBearingPosition topiği
+kafka-topics --create --topic TargetBearingPosition --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+# CameraLosStatus topiği
+kafka-topics --create --topic CameraLosStatus --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+# TowerPosition topiği
+kafka-topics --create --topic TowerPosition --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+```
+
 
 ### 2. Uygulamaları Çalıştırma
 Her bir uygulamayı kendi IDE'nizde veya komut satırında çalıştırabilirsiniz. Aşağıdaki komutları kullanarak uygulamaları çalıştırın:
@@ -73,7 +93,7 @@ java -jar path/to/your/camera_control.jar
 ### 3. AKHQ ile Kafka Yönetimi
 AKHQ, Kafka kümelerini izlemek ve yönetmek için grafiksel bir arayüz sunar. AKHQ'ya erişmek için tarayıcınızda http://localhost:8080 adresine gidin. Varsayılan kullanıcı adı ve şifre admin/admin'dir.
 
-AKHQ ile Kafka konularını izleyebilir, mesajları görebilir ve Kafka kümelerinin durumunu kontrol edebilirsiniz.
+AKHQ ile Kafka topiklerini izleyebilir, mesajları görebilir ve Kafka kümelerinin durumunu kontrol edebilirsiniz.
 
 ## Önemli Noktalar ve Önlemler
 Hata İşleme ve Loglama: Tüm uygulamalarda olası hatalar kontrol edilmekte ve loglanmaktadır. Bu, hata ayıklama ve izleme süreçlerini kolaylaştırır.
